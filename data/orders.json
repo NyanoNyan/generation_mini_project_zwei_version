@@ -1,0 +1,37 @@
+[
+    {
+        "customer_name": "John",
+        "customer_address": "Unit 2, 12 Main Street, LONDON, WH1 2ER",
+        "customer_phone": "0789887334",
+        "courier": 2,
+        "status": "preparing"
+    },
+    {
+        "customer_name": "Nyano",
+        "customer_address": "101 Thousand Street",
+        "customer_phone": "07112121",
+        "courier": "Byano",
+        "status": "completed"
+    },
+    {
+        "customer_name": "Bee",
+        "customer_address": "22",
+        "customer_phone": "2323]",
+        "courier": 4,
+        "status": "completed"
+    },
+    {
+        "customer_name": "Nyan",
+        "customer_address": "22",
+        "customer_phone": "34422",
+        "courier": 1,
+        "status": "PREPARING"
+    },
+    {
+        "customer_name": "Ten",
+        "customer_address": "60 Street Lane",
+        "customer_phone": "072224444",
+        "courier": "Saber Tooth",
+        "status": "PREPARING"
+    }
+]
