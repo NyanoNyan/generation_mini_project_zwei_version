@@ -1,4 +1,4 @@
-from helper_modules.operations_funcs import courier_menu, main_menu, product_menu, courier_menu, orders_menu
+from helper_modules.menu_operations import courier_menu, main_menu, product_menu, courier_menu, orders_menu
 
 def app():
     while True:
