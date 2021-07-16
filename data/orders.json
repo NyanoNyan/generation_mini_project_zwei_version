@@ -26,12 +26,5 @@
         "customer_phone": "34422",
         "courier": 1,
         "status": "PREPARING"
-    },
-    {
-        "customer_name": "Ten",
-        "customer_address": "60 Street Lane",
-        "customer_phone": "072224444",
-        "courier": "Saber Tooth",
-        "status": "PREPARING"
     }
 ]

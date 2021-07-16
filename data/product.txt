@@ -6,3 +6,4 @@ Choco
 Lays
 Potato
 Potato
+Mr Potato
