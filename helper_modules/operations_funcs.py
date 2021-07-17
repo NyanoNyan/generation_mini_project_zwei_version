@@ -39,27 +39,32 @@ def view_data(selection, data_storage):
         print('Item Inventory is empty')
     else:
         if selection == 'orders':
-            for data in data_storage:
+            for index, data in enumerate(data_storage):
+                print('\n')
+                print(f'Order number {index + 1}')
                 print(data)
+                print(f'Customer Name: {data["customer_name"]}')
+                print(f'Customer Adress: {data["customer_address"]}')
+                print(f'Customer Phone: {data["customer_phone"]}')
+                print(f'Courier: {data["courier"]}')
+                print(f'Status: {data["status"]}')
         else:
             print('\n')
             print('### Item inventory ###')
             print(f'The {selection}s include: {", ".join(data_storage)}')
             print('\n')
 
-def update_data(previous_name_index, new_name, filename, data_storage, selection):
+def update_data(previous_name_index, new_name, data_storage, selection):
     try:
         if selection == "orders":
             previous_name = copy.deepcopy(data_storage[int(previous_name_index)])
             data_storage[int(previous_name_index)]['status'] = status[new_name]
             print(data_storage)
-            write_orders(data_storage, filename)
             print('\n')
             print(f'Status of order {previous_name} has been changed to {data_storage[int(previous_name_index)]}')
         else:
             previous_name = data_storage[int(previous_name_index)]
             data_storage[int(previous_name_index)] = new_name
-            new_write(data_storage, filename)
             print('\n')
             print(f'{selection.capitalize()} {previous_name} has been changed to {new_name}')
     except Exception as e:
@@ -68,8 +73,10 @@ def update_data(previous_name_index, new_name, filename, data_storage, selection
         print('#################')
         print(f'{selection} {new_name} not found')
         print('#################')
+    
+    return data_storage
 
-def delete_data(index, filename, data_storage):
+def delete_data(index, data_storage):
     """Name of the data is removed from the data list which was loaded previously. Then the new updated list is written to the text file.
 
     Args:
@@ -82,7 +89,6 @@ def delete_data(index, filename, data_storage):
     try:
         name = copy.deepcopy(data_storage[int(index)])
         data_storage.pop(int(index))
-        new_write(data_storage, filename)
         print('\n')
         print(f'{name} is now deleted')
     except:
@@ -90,6 +96,8 @@ def delete_data(index, filename, data_storage):
         print('#################')
         print('The value you have entered cannot be deleted.')
         print('#################')
+    
+    return data_storage
 
 def confirmation_prints(name):
         print('\n')
