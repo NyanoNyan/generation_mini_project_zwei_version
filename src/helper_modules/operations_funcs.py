@@ -79,8 +79,10 @@ def append_data(selection, data_storage):
         
 def update_dict_data(data_storage):
         print('\n')
+        promt_msg = "Please insert one of the index from above to update: "
+        condition_list = list(range(len(data_storage)))
+        previous_input_index = input_helper(promt_msg, [], True, False)
         try:
-            previous_input_index = int(input('Please insert one of the index from above to update:'))
             selected_order = data_storage[previous_input_index]
             new_obj = {}
             for key, value in selected_order.items():
@@ -109,6 +111,7 @@ def update_dict_data(data_storage):
             print(f'Error: {e}')
             print('Please make sure to enter a valid option')
             print('\n')
+            return data_storage
         
 
 def update_data(previous_name_index, new_name, data_storage, selection):
@@ -184,13 +187,9 @@ def extra_order_info(load_product, load_courier):
     check_list = [int(number) for number in range(len(load_courier))]
     print(check_list)
     ## Why is this not working?
-    while True:
-        courier_selection = int(input('Please enter the index of the courier: '))
-        
-        if courier_selection in check_list:
-            break
-        else: 
-            print('Please enter a valid input')
+    prompt_msg = "Please enter the index of the courier: "
+    courier_selection = input_helper(prompt_msg, check_list, True, True)
+
     status = 'PREPARING'
 
     new_object_data = {
@@ -203,3 +202,23 @@ def extra_order_info(load_product, load_courier):
     }
     
     return new_object_data
+
+def input_helper(prompt, condition_list, set_int=False, is_cond=False):
+    while True:
+        try:
+            user_input = input(prompt)
+            if set_int == True:
+                user_input = int(user_input)
+        except ValueError:
+            print('Please enter a valid input')
+            continue
+        
+        if is_cond == True:
+            if user_input in condition_list:
+                break
+            else:
+                print('Please enter a valid input')
+        else:
+            break
+
+    return user_input
