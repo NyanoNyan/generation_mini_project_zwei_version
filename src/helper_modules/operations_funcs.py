@@ -18,6 +18,7 @@ def selection_print(selection):
         print('\n')
     elif selection == 'orders':
         print('\n')
+        print(f'######### {selection.capitalize()} Menu #########')
         print(f'### Welcome to your {selection} storage system ###')
         print('\n')
         print('Press 0 to return to the menu')
