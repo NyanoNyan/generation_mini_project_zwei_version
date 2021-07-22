@@ -1,6 +1,7 @@
-from helper_modules.operations_funcs import selection_print, read_data, view_data, confirmation_prints, show_with_index, update_data, delete_data, extra_order_info
+from helper_modules.operations_funcs import selection_print, read_data, view_data, confirmation_prints, show_with_index, update_data, delete_data, extra_order_info, append_data, update_dict_data
 from helper_modules.file_handler import read_data
 from helper_modules.orders import read_orders, write_orders, status
+from helper_modules.csv_handler import write_csv
 
 def main_menu():
 
@@ -37,23 +38,25 @@ def product_menu(selection, data_storage, filename):
         
         if product_menu_selection == "0":
             break
+        
         elif product_menu_selection == "1":
             view_data(selection, data_storage)
+            
         elif product_menu_selection == "2":
-            new_input = input('Please add in the a new product name: ')   
-            data_storage.append(new_input) 
-            confirmation_prints(new_input)
+            data_storage.append(append_data(selection, data_storage))
+            
         elif product_menu_selection == "3":
             show_with_index(selection, data_storage)
-            previous_input_index = input(f'Please insert the {selection} index you want to change: ')
-            new_name = input('Please insert the new product name:')
-            data_storage = update_data(previous_input_index, new_name, data_storage, selection)
+            data_storage = update_dict_data((data_storage))
+            
         elif product_menu_selection == "4":
             show_with_index(selection, data_storage)
             delete_input = input(f'Please insert the index of the {selection} you want deleted: ')
             data_storage = delete_data(delete_input, data_storage)
+            
         elif product_menu_selection == "m":
             selection_print(selection)
+            
         else:
             print('Please enter a valid input')
         
@@ -66,21 +69,22 @@ def courier_menu(selection, data_storage, filename):
         
         if courier_menu_selection == "0":
             break
+        
         elif courier_menu_selection == "1":
             view_data(selection, data_storage)
+            
         elif courier_menu_selection == "2":
-            new_input = input('Please add in the a new courier name: ')    
-            data_storage.append(new_input) 
-            confirmation_prints(new_input)
+            data_storage.append(append_data(selection, data_storage))
+            
         elif courier_menu_selection == "3":
             show_with_index(selection, data_storage)
-            previous_input_index = input(f'Please insert the {selection} index you want to change: ')
-            new_name = input(f'Please insert the new {selection} name:')
-            data_storage = update_data(previous_input_index, new_name, data_storage, selection)
+            data_storage = update_dict_data((data_storage))
+            
         elif courier_menu_selection == "4":
             show_with_index(selection, data_storage)
             delete_input = input(f'Please insert the index of the {selection} you want deleted: ')
             data_storage = delete_data(delete_input, data_storage)
+            
         elif courier_menu_selection == "m":
             selection_print(selection)
         else:
@@ -88,28 +92,35 @@ def courier_menu(selection, data_storage, filename):
         
     return data_storage
 
-def orders_menu(selection):
+def orders_menu(selection, data_storage, data_storage_product, data_storage_courier):
     selection_print(selection)
-    filename = 'orders.json'
-    data_storage = read_orders(filename)
     while True:
         orders_menu_selection = input('Please select an option or press m to see the menu options: ')
         
         if orders_menu_selection == "0":
             break
+        
         elif orders_menu_selection == "1":
             print('### Orders Inventory ###')
             print('\n')
             view_data(selection, data_storage)
             print('\n')
+            
         elif orders_menu_selection == "2":
-            new_object_data = extra_order_info()
-            print('\n')
-            data_storage.append(new_object_data)
-            write_orders(data_storage, filename)
-            print('\n')
-            print('New order has been added!')
-            print('\n')
+            try:
+                new_object_data = extra_order_info(data_storage_product, data_storage_courier)
+                print('\n')
+                data_storage.append(new_object_data)
+        
+                print('\n')
+                print('New order has been added!')
+                print('\n')
+            except Exception as error:
+                print('\n')
+                print(error)
+                print('Value was not recorded, please try again.')
+                print('\n')
+                
         elif orders_menu_selection == "3":
             show_with_index(selection, data_storage)
             print('\n')
@@ -118,45 +129,23 @@ def orders_menu(selection):
                 [print(index, status_name) for index, status_name in enumerate(status)]
                 new_status_index = int(input('Please insert the new order status index:'))
                 data_storage = update_data(previous_input_index, new_status_index, data_storage, selection)
-                write_orders(data_storage, filename)
+                
             except Exception as e:
                 print('\n')
                 print(f'Error: {e}')
                 print('Please make sure to enter a valid option')
                 print('\n')
+                
         elif orders_menu_selection == "4":
             show_with_index(selection, data_storage)
-            print('\n')
-            try:
-                previous_input_index = int(input('Please insert the new order status index:'))
-                selected_order = data_storage[previous_input_index]
-                new_obj = {}
-                for key, value in selected_order.items():
-                    new_input = input(f'New value for {key}: ')
-                    
-                    if new_input == "":
-                        new_obj[key] = value
-                    else:
-                        if key == 'courier':
-                            new_obj[key] = int(new_input)
-                        else:
-                            new_obj[key] = new_input
-                data_storage[previous_input_index] = new_obj
-                write_orders(data_storage, filename)
-                print('Order has been updated')
-                # update_data(previous_input_index, previous_input_index, filename, data_storage, selection)
-            except Exception as e:
-                print('\n')
-                print(f'Error: {e}')
-                print('Please make sure to enter a valid option')
-                print('\n')
+            data_storage = update_dict_data(data_storage)
+                
         elif orders_menu_selection == "5":
             show_with_index(selection, data_storage)
             print('\n')
             try:
                 index_delete = int(input('Please enter the index of order which you want to delete: '))
                 deleted = data_storage.pop(index_delete)
-                write_orders(data_storage, filename)
                 print('\n')
                 print(f'{deleted} has been deleted')
                 print('\n')
@@ -169,3 +158,5 @@ def orders_menu(selection):
             selection_print(selection)
         else:
             print('Please enter a valid input')
+
+    return data_storage
