@@ -1,37 +1,35 @@
 [
     {
-        "customer_name": "John",
-        "customer_address": "Unit 2, 12 Main Street, LONDON, WH1 2ER",
-        "customer_phone": "0789887334",
-        "courier": 2,
-        "status": "preparing"
-    },
-    {
-        "customer_name": "Nyano",
-        "customer_address": "101 Thousand Street",
-        "customer_phone": "07112121",
-        "courier": "Byano",
-        "status": "completed"
-    },
-    {
-        "customer_name": "Bee",
-        "customer_address": "22",
-        "customer_phone": "2323]",
-        "courier": 4,
-        "status": "completed"
-    },
-    {
-        "customer_name": "Nyan",
-        "customer_address": "22",
-        "customer_phone": "34422",
+        "customer_name": "Strange",
+        "customer_address": "12th Street",
+        "customer_phone": "sfsafs",
         "courier": 1,
-        "status": "PREPARING"
+        "status": "PREPARING",
+        "items": [
+            0,
+            1
+        ]
     },
     {
-        "customer_name": "Time",
-        "customer_address": "66th Streey",
-        "customer_phone": "073728188387",
-        "courier": 4,
-        "status": "PREPARING"
+        "customer_name": "hgh",
+        "customer_address": "jhg",
+        "customer_phone": "787",
+        "courier": 1,
+        "status": "PREPARING",
+        "items": [
+            0,
+            1
+        ]
+    },
+    {
+        "customer_name": "sdf",
+        "customer_address": "fdsf",
+        "customer_phone": "sdf",
+        "courier": 1,
+        "status": "PREPARING",
+        "items": [
+            0,
+            1
+        ]
     }
 ]
