@@ -1,4 +1,4 @@
-import os, sys
+import os
 
 def set_up_path(filename):
     """Set the path to folder containing the data
@@ -29,7 +29,6 @@ def read_data(file_name):
     """
     
     pathway = set_up_path(file_name)
-    print(pathway)
     with open(pathway, 'r') as file:
         data = file.readlines()
         data = [product.strip() for product in data]
