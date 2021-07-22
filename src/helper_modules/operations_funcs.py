@@ -7,6 +7,7 @@ from helper_modules.csv_handler import read_csv
 def selection_print(selection):
     if selection == "product" or selection == "courier":
         print('\n')
+        print(f'######### {selection.capitalize()} Menu #########')
         print(f'### Welcome to your {selection} storage system ###')
         print('\n')
         print('Press 0 to return to the menu')
