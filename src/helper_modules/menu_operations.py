@@ -6,6 +6,7 @@ from helper_modules.csv_handler import write_csv
 def main_menu():
 
     print('\n')
+    print('####### Main Menu ########')
     print('Press 0 to exit the application and save the data changes')
     print('Press 1 to go to product menu')
     print('Press 2 to go to couriers menu')
