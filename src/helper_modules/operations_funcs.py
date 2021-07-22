@@ -2,6 +2,7 @@ import copy
 
 from helper_modules.file_handler import read_data, new_write
 from helper_modules.orders import read_orders, write_orders, status
+from helper_modules.csv_handler import read_csv
 
 def selection_print(selection):
     if selection == "product" or selection == "courier":
@@ -34,7 +35,7 @@ def view_data(selection, data_storage):
     selection (str): A string containing either 'product' or 'courier'
 
     """
-
+    print(data_storage)
     if len(data_storage) == 0:
         print('Item Inventory is empty')
     else:
@@ -48,11 +49,65 @@ def view_data(selection, data_storage):
                 print(f'Customer Phone: {data["customer_phone"]}')
                 print(f'Courier: {data["courier"]}')
                 print(f'Status: {data["status"]}')
+                print(f'Items: {data["items"]}')
         else:
             print('\n')
             print('### Item inventory ###')
-            print(f'The {selection}s include: {", ".join(data_storage)}')
+            print(f'The {selection}s include: {data_storage}')
             print('\n')
+
+def append_data(selection, data_storage):
+    try:
+        if selection == 'product':
+            new_input_name = input('Please add in the a new product name: ')
+            new_input_price = float(input('Please add in the  product price: '))
+            new_data = {'name': new_input_name, 'price': new_input_price}
+            confirmation_prints(new_data)
+            
+            return new_data
+        elif selection == 'courier':
+            new_input_name = input('Please add in the a new courier name: ') 
+            new_input_price = input('Please add in the new courier phone number: ')
+            new_data = {'name': new_input_name, 'phone': new_input_price}
+            confirmation_prints(new_data)
+            
+            return new_data
+    except:
+        print('Input is wrong')
+        
+def update_dict_data(data_storage):
+        print('\n')
+        try:
+            previous_input_index = int(input('Please insert one of the index from above to update:'))
+            selected_order = data_storage[previous_input_index]
+            new_obj = {}
+            for key, value in selected_order.items():
+                new_input = input(f'New value for {key}: ')
+                
+                if new_input == "":
+                    new_obj[key] = value
+                else:
+                    if key == 'courier':
+                        new_obj[key] = int(new_input)
+                    elif key == 'price':
+                        new_obj[key] = float(new_input)
+                    elif key == 'items':
+                        list_indx_values = new_input.strip().split(',')
+                        list_indx_values2 = [int(x) for x in list_indx_values]
+                        new_obj[key] = list_indx_values2
+                    else:
+                        new_obj[key] = new_input
+            data_storage[previous_input_index] = new_obj
+            print('Order has been updated')
+            
+            return data_storage
+
+        except Exception as e:
+            print('\n')
+            print(f'Error: {e}')
+            print('Please make sure to enter a valid option')
+            print('\n')
+        
 
 def update_data(previous_name_index, new_name, data_storage, selection):
     try:
@@ -105,20 +160,28 @@ def confirmation_prints(name):
         print('\n')
 
 def show_with_index(selection, data_storage):
-    print(f'{selection} list with index')
+    print('\n')
+    print(f'{selection.capitalize()} list with index')
     for index, order in enumerate(data_storage):
         print(index, order)
 
-def extra_order_info():
+def extra_order_info(load_product, load_courier):
     customer_name = input('Please input the customer name: ')
     customer_address = input('Please input the customer address: ')
     phone_number = input('Please input the phone number:')
     
-    filename = 'courier.txt'
-    load_courier = read_data(filename)
-    print('Courier List')
+    # Print products list with its index value
+    show_with_index('product', load_product)
+    
+    product_idx_values = input('Please enter the product index e.g. 1, 2, 5. Seperated with a comma to indcate the product you want to add: ')
+    list_indx_values = product_idx_values.strip().split(',')
+    list_indx_values2 = [int(x) for x in list_indx_values]
+    
+    # Print courier list with index value
     show_with_index('courier', load_courier)
-    check_list = [str(number) for number in range(len(load_courier))]
+    check_list = [int(number) for number in range(len(load_courier))]
+    print(check_list)
+    ## Why is this not working?
     while True:
         courier_selection = int(input('Please enter the index of the courier: '))
         
@@ -133,7 +196,8 @@ def extra_order_info():
         "customer_address": customer_address,
         "customer_phone": phone_number,
         "courier": courier_selection,
-        "status": status
+        "status": status,
+        "items": list_indx_values2
     }
-
+    
     return new_object_data
