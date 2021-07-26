@@ -1,7 +1,14 @@
 __pycache__
+
+weekly_instructions
+htmlcov
+
+.pytest_cache
+.coverage
+.venv
+
 testing_product.txt
 fixes.md
-weekly_instructions
-tests
+learning.md
 fake_data.csv
-.venv
+random_playing_around.py
