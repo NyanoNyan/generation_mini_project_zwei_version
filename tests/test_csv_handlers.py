@@ -5,8 +5,12 @@ from src.helper_modules.csv_handler import read_csv, write_csv, convert_to_corre
 
 @pytest.fixture()
 def load_fake_data():
-    data = read_csv('fake_data.csv')
-    yield data
+    #Load up
+    data = [{'name':'Cola', 'price':'1.2'}]
+    write_csv(data, 'fake_data.csv')
+    data_read = read_csv('fake_data.csv')
+    yield data_read
+    #Tear down
     write_csv(data, 'fake_data.csv')
 
 def test_convert_to_correct_type():
@@ -52,7 +56,7 @@ def test_convert_to_correct_type():
     #Setup 2
     assert convert_to_correct_type(data_orders, filename_orders) == expected_orders
     
-    # Wrong iput checks
+    # Wrong input checks
     #Setup 3
     assert convert_to_correct_type(data_product, filename_product_invalid) == expected_product_invalid
     #Setup 4
@@ -63,7 +67,6 @@ def test_read_csv(load_fake_data):
     ### convert to type doesn't work for test data
     # Setup 1
     expected = load_fake_data
-    
     result = read_csv('fake_data.csv')
     # Setup 2
     result2= read_csv('sfasf.csv')
@@ -106,12 +109,13 @@ def test_write_csv(load_fake_data):
     
     # Correct format
     assert data == result
-    
+
     # Wrong format
     assert result_second == expected
     
     # List, list format
     assert result_third == expected
+
 
 # def test_write_orders_csv():
 #     data = [
