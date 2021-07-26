@@ -55,7 +55,8 @@ def view_data(selection, data_storage):
         else:
             print('\n')
             print('### Item inventory ###')
-            print(f'The {selection}s include: {data_storage}')
+            print(f'The {selection}s include: ')
+            show_with_index(selection, data_storage)
             print('\n')
 
 def append_data(selection, data_storage):
