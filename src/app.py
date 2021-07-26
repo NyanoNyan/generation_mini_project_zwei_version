@@ -18,7 +18,7 @@ def app():
     data_order = read_csv(filename_order)
     
     while True:
-        clear_screen()
+        # clear_screen()
         main_menu_option, selection = main_menu()
         if main_menu_option == "0":
             print("\n")
