@@ -1,5 +1,6 @@
 from helper_modules.operations_funcs import selection_print, view_data, show_with_index, update_data, delete_data, extra_order_info, append_data, update_dict_data, input_helper
 from helper_modules.orders import status
+from db.setup_db import show_db_data, update_to_db, delete_to_db
 
 def main_menu():
 
@@ -40,13 +41,14 @@ def product_menu(selection, data_storage, filename):
             data_storage.append(append_data(selection, data_storage))
             
         elif product_menu_selection == "3":
-            show_with_index(selection, data_storage)
-            data_storage = update_dict_data((data_storage))
+            print('\n')
+            show_db_data(selection)
+            update_to_db(selection)
             
         elif product_menu_selection == "4":
-            show_with_index(selection, data_storage)
-            delete_input = input(f'Please insert the index of the {selection} you want deleted: ')
-            data_storage = delete_data(delete_input, data_storage)
+            view_data(selection, data_storage)
+            input_index= int(input(f'Please insert the index of the {selection} you want deleted: '))
+            delete_to_db(selection, input_index)
             
         elif product_menu_selection == "m":
             selection_print(selection)
@@ -71,13 +73,14 @@ def courier_menu(selection, data_storage, filename):
             data_storage.append(append_data(selection, data_storage))
             
         elif courier_menu_selection == "3":
-            show_with_index(selection, data_storage)
-            data_storage = update_dict_data((data_storage))
+            print('\n')
+            show_db_data(selection)
+            update_to_db(selection)
             
         elif courier_menu_selection == "4":
-            show_with_index(selection, data_storage)
-            delete_input = input(f'Please insert the index of the {selection} you want deleted: ')
-            data_storage = delete_data(delete_input, data_storage)
+            view_data(selection, data_storage)
+            input_index= int(input(f'Please insert the index of the {selection} you want deleted: '))
+            delete_to_db(selection, input_index)
             
         elif courier_menu_selection == "m":
             selection_print(selection)
