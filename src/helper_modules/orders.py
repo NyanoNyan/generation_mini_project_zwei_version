@@ -11,7 +11,7 @@ from helper_modules.file_handler import set_up_path
 #     "status": "preparing"
 #     }
 # ]
-status = ["PREPARTING", "completed"]
+status = ["preparing", "out-for-delivery", "delivered"]
 
 # def initialize():
 #     pathway = set_up_path(filename)
