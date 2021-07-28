@@ -8,3 +8,10 @@ pyparsing==2.4.7
 pytest==6.2.4
 pytest-cov==2.12.1
 toml==0.10.2
+
+cffi==1.14.4
+cryptography==3.3.2
+pycparser==2.20
+PyMySQL==0.10.1
+python-dotenv==0.15.0
+six==1.15.0
