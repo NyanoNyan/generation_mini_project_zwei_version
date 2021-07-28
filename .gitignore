@@ -6,6 +6,7 @@ htmlcov
 .pytest_cache
 .coverage
 .venv
+.env
 
 testing_product.txt
 fixes.md
