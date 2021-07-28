@@ -1,6 +1,8 @@
 import copy
 
 from helper_modules.orders import status
+from db.setup_db import show_db_data, add_to_db
+from helper_modules.input_helper import input_helper
 
 def selection_print(selection):
     if selection == "product" or selection == "courier":
@@ -54,7 +56,7 @@ def view_data(selection, data_storage):
             print('\n')
             print('### Item inventory ###')
             print(f'The {selection}s include: ')
-            show_with_index(selection, data_storage)
+            show_db_data(selection)
             print('\n')
 
 def append_data(selection, data_storage):
@@ -63,13 +65,15 @@ def append_data(selection, data_storage):
             new_input_name = input('Please add in the a new product name: ')
             new_input_price = float(input('Please add in the  product price: '))
             new_data = {'name': new_input_name, 'price': new_input_price}
+            add_to_db(selection, new_input_name, new_input_price)
             confirmation_prints(new_data)
             
             return new_data
         elif selection == 'courier':
             new_input_name = input('Please add in the a new courier name: ') 
-            new_input_price = input('Please add in the new courier phone number: ')
-            new_data = {'name': new_input_name, 'phone': new_input_price}
+            new_input_number = input('Please add in the new courier phone number: ')
+            new_data = {'name': new_input_name, 'phone': new_input_number}
+            add_to_db(selection, new_input_name, new_input_number)
             confirmation_prints(new_data)
             
             return new_data
@@ -201,23 +205,3 @@ def extra_order_info(load_product, load_courier):
     }
     
     return new_object_data
-
-def input_helper(prompt, condition_list, set_int=False, is_cond=False):
-    while True:
-        try:
-            user_input = input(prompt)
-            if set_int == True:
-                user_input = int(user_input)
-        except ValueError:
-            print('Please enter a valid input')
-            continue
-        
-        if is_cond == True:
-            if user_input in condition_list:
-                break
-            else:
-                print('Please enter a valid input')
-        else:
-            break
-
-    return user_input
