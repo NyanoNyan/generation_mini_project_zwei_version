@@ -1,9 +1,11 @@
+from os import path
 import pytest
 
-from db.setup_db import HelperDB, show_db_data
+from db.setup_db import HelperDB, show_db_data, add_to_db, update_to_db
+from unittest.mock import patch
 from unittest import mock
 
-@pytest.fixture
+@pytest.fixture()
 def setup_database():
     ## Set up
     print("\nSet up")
@@ -48,3 +50,27 @@ def test_show_db_data(setup_database):
     expected = ((1, 'KitKat', 1.2), (2, 'Coke Zero', 1.4))
     
     assert expected == actual
+
+def test_add_to_db(setup_database):
+    setup_database
+    add_to_db('test_product', 'Tomato', 1.2)
+    db = HelperDB()
+    actual = db.fetch_all(f"SELECT * FROM test_product WHERE name = 'Tomato'")[0]
+    
+    assert 'Tomato' and 1.2 in actual
+
+@patch("builtins.input", side_effect=['2', 'Pepsi', ''])
+@patch("builtins.print")
+def test_update_to_db(mock_print, mock_input, setup_database):
+    setup_database
+    mock_input
+    update_to_db('test_product')
+    
+    ## Check if data has gone through database execution
+    mock_print.assert_called_with("\nData has been updated!\n")
+    assert mock_input.call_count == 3
+    
+    ## Check if the data has been changed
+    db = HelperDB()
+    actual = db.fetch_all(f'SELECT * FROM test_product WHERE name = "Pepsi"')[0]
+    assert 'Pepsi' in actual
