@@ -46,14 +46,9 @@ class HelperDB:
         self.disconnect_database()
 
 
-def show_db_data(selection, connection_t='real'):
+def show_db_data(selection):
     try:
-        if connection_t == 'real':
-            print('In real')
-            db = HelperDB()
-        else:
-            db = connection_t
-
+        db = HelperDB()
         rows = db.fetch_all(f'SELECT * FROM {selection}')
         print('inside the func', rows)
         #get the table names
@@ -95,22 +90,22 @@ def update_to_db(selection):
         column_names = db.get_column_names(selection)[1:]
 
         promt_msg = "Please insert one of the index from above to update: "
-        previous_input_index = input_helper(promt_msg, [], True, False)
-
+        previous_input_index = input_helper(promt_msg, [], set_int=True, isLoop=True)
         for col_name in column_names:
             new_input = input(f'New value for {col_name}: ')
             if new_input == "":
                 continue
             else:
-                db.execute_operation(
-                    f'UPDATE {selection} SET {col_name} = {new_input}'
-                    + f' WHERE id = {previous_input_index}'
-                )
-                print('Data has been updated!')
-                print('\n')
+                if col_name not in ['price']:
+                    new_input = f'\"{new_input}\"'
+
+                sql = f'UPDATE {selection} SET {col_name} = {new_input} WHERE id = {previous_input_index}'
+                db.execute_operation(sql)
+
     except Exception as error:
         print('Cannot update to Database', error)
     else:
+        print('\nData has been updated!\n')
         if db.conn.open:
             db.disconnect_database()
 
