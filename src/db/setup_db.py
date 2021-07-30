@@ -114,10 +114,9 @@ def delete_to_db(selection, index):
     try:
         db = HelperDB()
         db.execute_operation(f'DELETE FROM {selection} WHERE id = {index};')
-        print(f'Index entry: {index} has now been deleted!')
-        print('\n')
+        print(f'Index entry: {index} has now been deleted!\n')
     except Exception as error:
-        print('Cannot delete data from the database', error)
+        print('Cannot delete data from the database. ' + str(error.args[1]))
     else:
         if db.conn.open:
             db.disconnect_database()
