@@ -1,7 +1,7 @@
 from os import path
 import pytest
 
-from db.setup_db import HelperDB, show_db_data, add_to_db, update_to_db
+from db.setup_db import HelperDB, show_db_data, add_to_db, update_to_db, delete_to_db
 from unittest.mock import patch
 from unittest import mock
 
@@ -74,3 +74,15 @@ def test_update_to_db(mock_print, mock_input, setup_database):
     db = HelperDB()
     actual = db.fetch_all(f'SELECT * FROM test_product WHERE name = "Pepsi"')[0]
     assert 'Pepsi' in actual
+
+@patch("builtins.print")
+def test_delete_to_db(mock_print, setup_database):
+    setup_database
+    
+    # Correct selection leading to deletion
+    delete_to_db('test_product', 2)
+    mock_print.assert_called_with('Index entry: 2 has now been deleted!\n')
+    
+    # Wrong selection
+    delete_to_db('sfsafaf', 2)
+    mock_print.assert_called_with("Cannot delete data from the database. Table 'mini_project_storage.sfsafaf' doesn't exist")
