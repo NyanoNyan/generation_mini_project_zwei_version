@@ -105,9 +105,10 @@ def orders_menu(selection, data_storage, data_storage_product, data_storage_cour
             
         elif orders_menu_selection == "2":
             try:
-                new_object_data = extra_order_info(data_storage_product, data_storage_courier)
+                append_data(selection)
+                # new_object_data = extra_order_info(data_storage_product, data_storage_courier)
                 print('\n')
-                data_storage.append(new_object_data)
+                # data_storage.append(new_object_data)
         
                 print('\n')
                 print('New order has been added!')
