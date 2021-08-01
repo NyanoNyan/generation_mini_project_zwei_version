@@ -44,6 +44,9 @@ class HelperDB:
         self.set_up_db_connection()
         self.cur.execute(sql)
         self.disconnect_database()
+    
+    def execute_leave_open(self, sql):
+        self.cur.execute(sql)
 
 
 def show_db_data(selection):
@@ -53,7 +56,7 @@ def show_db_data(selection):
         print('inside the func', rows)
         #get the table names
         column_names = db.get_column_names(selection)
-
+        print('\n')
         for row in rows:
             print(f'{column_names[0]}: {row[0]}, {column_names[1]}: {row[1]}, {column_names[2]}: {row[2]}')
 
@@ -67,17 +70,28 @@ def show_db_data(selection):
 
     return []
 
-def add_to_db(selection, new_value_one, new_value_two):
+def add_to_db(selection, new_value):
     try:
         db = HelperDB()
-        column_names = db.get_column_names(selection)
-        print('I can reach here')
-        print(selection, column_names, new_value_one, new_value_two)
+        if selection == 'orders':
+            column_names_cus = db.get_column_names('customer_detail')
+            column_names_ord = db.get_column_names('orders')
 
-        db.execute_operation(
-            f'INSERT INTO {selection} ( {column_names[1]},{column_names[2]} )'
-            + f'VALUES ( "{new_value_one}",{new_value_two} );'
-        )
+            db.set_up_db_connection()
+            sql1 = f'INSERT INTO customer_detail ( {column_names_cus[1]},{column_names_cus[2]},{column_names_cus[3]} )' + f' VALUES (\"{new_value[0]}\",\"{new_value[1]}\",\"{new_value[2]}\");'
+            db.execute_leave_open(sql1)
+            db.execute_leave_open('SELECT LAST_INSERT_ID()')
+            get_created_cust_id = int(db.cur.fetchall()[0][0])
+
+            for product_id in new_value[-1]:
+                sql2 = f' INSERT INTO orders ( {column_names_ord[1]},{column_names_ord[2]},{column_names_ord[3]},{column_names_ord[4]} )' + f' VALUES ({get_created_cust_id}, {new_value[3]},{new_value[4]},{product_id} );'
+                db.execute_leave_open(sql2)
+        else:
+            column_names = db.get_column_names(selection)
+            db.execute_operation(
+                f'INSERT INTO {selection} ( {column_names[1]},{column_names[2]} )'
+                + f' VALUES ( \"{new_value[0]}\",{new_value[1]} );'
+            )
     except Exception as error:
         print('Cannot add data from the database', error)
     else:
