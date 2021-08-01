@@ -1,7 +1,7 @@
 import copy
 
 from helper_modules.orders import status
-from db.setup_db import show_db_data, add_to_db
+from db.setup_db import show_db_data, add_to_db, HelperDB
 from helper_modules.input_helper import input_helper
 
 def selection_print(selection):
@@ -59,26 +59,35 @@ def view_data(selection, data_storage):
             show_db_data(selection)
             print('\n')
 
-def append_data(selection, data_storage):
+def append_data(selection):
     try:
         if selection == 'product':
             new_input_name = input('Please add in the a new product name: ')
             new_input_price = float(input('Please add in the  product price: '))
             new_data = {'name': new_input_name, 'price': new_input_price}
-            add_to_db(selection, new_input_name, new_input_price)
-            confirmation_prints(new_data)
+            add_to_db(selection, [new_input_name, new_input_price])
             
             return new_data
         elif selection == 'courier':
             new_input_name = input('Please add in the a new courier name: ') 
             new_input_number = input('Please add in the new courier phone number: ')
             new_data = {'name': new_input_name, 'phone': new_input_number}
-            add_to_db(selection, new_input_name, new_input_number)
-            confirmation_prints(new_data)
+            add_to_db(selection, [new_input_name, new_input_number])
+            
             
             return new_data
+        elif selection == 'orders':
+            db = HelperDB()
+            ## Use extra_order_info
+            ## Load in that function, by passing it variable names such as product and courier
+            input_data = extra_order_info('product','courier')
+            print(input_data[:3])
+            add_to_db(selection, input_data)
+
     except:
         print('Input is wrong')
+    else:
+        print('\nData has been added!')
         
 def update_dict_data(data_storage):
         print('\n')
@@ -179,29 +188,31 @@ def extra_order_info(load_product, load_courier):
     phone_number = input('Please input the phone number:')
     
     # Print products list with its index value
-    show_with_index('product', load_product)
-    
-    product_idx_values = input('Please enter the product index e.g. 1, 2, 5. Seperated with a comma to indcate the product you want to add: ')
-    list_indx_values = product_idx_values.strip().split(',')
-    list_indx_values2 = [int(x) for x in list_indx_values]
+    data_product = show_db_data(load_product)
+    data_product_indexes = [data[0] for data in data_product]
+
+    # Get valid comma seperated product id's
+    while True:
+        product_idx_values = input('Please enter the product index e.g. 1, 2, 5. Seperated with a comma to indcate the product you want to add: ')
+        list_indx_values = product_idx_values.strip().split(',')
+        list_indx_values2 = [int(x) for x in list_indx_values]
+        
+        if set(list_indx_values2).issubset(set(data_product_indexes)):
+            break 
+        else:
+            print("Please enter valid Product Id's")
     
     # Print courier list with index value
-    show_with_index('courier', load_courier)
-    check_list = [int(number) for number in range(len(load_courier))]
-    print(check_list)
+    data_courier = show_db_data(load_courier)
+    check_list = [index[0] for index in data_courier]
+    print('check_list:', check_list)
     ## Why is this not working?
     prompt_msg = "Please enter the index of the courier: "
-    courier_selection = input_helper(prompt_msg, check_list, True, True)
-
-    status = 'PREPARING'
-
-    new_object_data = {
-        "customer_name": customer_name,
-        "customer_address": customer_address,
-        "customer_phone": phone_number,
-        "courier": courier_selection,
-        "status": status,
-        "items": list_indx_values2
-    }
+    courier_selection = input_helper(prompt_msg, check_list, True, True, True)
+    print('courier selection:', courier_selection)
+    status = 1
     
-    return new_object_data
+    # Don't think I would need to chaneg the dictionary. Much more cleaner format than list
+    # in this scenario for add it to the database
+    
+    return [customer_name, customer_address, phone_number, courier_selection, status, list_indx_values2]
