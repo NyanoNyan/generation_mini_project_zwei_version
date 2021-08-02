@@ -51,25 +51,27 @@ def test_show_db_data():
     assert expected == actual
 
 def test_add_to_db():
-    # Test adding to product
+    ### Test adding to product
     add_to_db('product', ['Tomato', 1.2], test=True)
     db = HelperDB(test=True)
     actual = db.fetch_all(f"SELECT * FROM product WHERE name = 'Tomato'", dict_cur=True)
     print(actual)
     assert ('Tomato' and 1.2 in actual[0].values())
 
+    #Reset changes
     db.execute_operation('DELETE FROM product WHERE name = "Tomato"')
 
-    # Test adding to courier
+    ### Test adding to courier
     add_to_db('courier', ['DPD', '07888665654'], test=True)
     db = HelperDB(test=True)
     actual = db.fetch_all(f"SELECT * FROM courier WHERE name = 'DPD'", dict_cur=True)
     print(actual)
     assert ('DPD' and '07888665654' in actual[0].values())
-
+    
+    # Reset changes
     db.execute_operation('DELETE FROM courier WHERE name = "DPD"')
 
-    # Test adding to orders
+    ### Test adding to orders
     add_to_db('orders', ['Miles', '99th Street', '07872817281',1, 1, [1,2]], test=True)
     db = HelperDB(test=True)
 
@@ -79,24 +81,27 @@ def test_add_to_db():
         + " WHERE customer_name = 'Miles';", dict_cur=True)
     print(actual)
     assert ('Miles' and '99th Street' in actual[0].values())
+    # Reset changes
     db.execute_operation('TRUNCATE TABLE orders;')
     db.execute_operation('DELETE FROM customer_detail WHERE customer_name = "Miles"')
 
-# @patch("builtins.input", side_effect=['2', 'Pepsi', ''])
-# @patch("builtins.print")
-# def test_update_to_db(mock_print, mock_input, setup_database):
-#     setup_database
-#     mock_input
-#     update_to_db('test_product')
+@patch("builtins.input", side_effect=['11', 'Sausage Rolls', 2.2])
+@patch("builtins.print")
+def test_update_to_db(mock_print, mock_input):
+    ### Update Product, but only change price
+    mock_input
+    update_to_db('product', test=True)
     
-#     ## Check if data has gone through database execution
-#     mock_print.assert_called_with("\nData has been updated!\n")
-#     assert mock_input.call_count == 3
+    ## Check if data has gone through database execution
+    mock_print.assert_called_with("\nData has been updated!\n")
+    assert mock_input.call_count == 3
     
-#     ## Check if the data has been changed
-#     db = HelperDB(test=True)
-#     actual = db.fetch_all(f'SELECT * FROM test_product WHERE name = "Pepsi"')[0]
-#     assert 'Pepsi' in actual
+    ## Check if the data has been changed
+    db = HelperDB(test=True)
+    actual = db.fetch_all(f'SELECT * FROM product WHERE name = "Sausage Rolls"')[0]
+    assert 'Sausage Rolls' and 2.2 in actual
+    # Reset changes
+    db.execute_operation('UPDATE product SET price = 1.2 WHERE id = "11";')
 
 # @patch("builtins.print")
 # def test_delete_to_db(mock_print, setup_database):
