@@ -127,27 +127,27 @@ def add_to_db(selection, new_value, test=False):
         if db.conn.open:
             db.disconnect_database()
 
-def update_to_db(selection):
+def update_to_db(selection, test=False):
     try:
-        db = HelperDB()
+        db = HelperDB(test)
 
         if selection == 'update_order_status':
             column_names = db.get_column_names('orders')[1:]
             # Get the status Order index
             prompt_msg = f'Please insert the order status index you want to change: '
-            condition_list = [index[0] for index in show_db_data('orders')]
+            condition_list = [index[0] for index in show_db_data('orders', isTuple=True)]
             previous_input_index_order = input_helper(prompt_msg, condition_list, True, True)
             
             # Get the Status index
             prompt_msg2 = f'Please insert the {selection} status index you want to change: '
-            condition_list2 = [index[0] for index in show_db_data('status')]
+            condition_list2 = [index[0] for index in show_db_data('status',isTuple=True)]
             new_status_index = input_helper(prompt_msg2, condition_list2, True, True)
             
             sql = f'UPDATE orders SET status_id = {new_status_index} WHERE id = {previous_input_index_order}'
         else:
             column_names = db.get_column_names(selection)[1:]
             promt_msg = "Please insert one of the index from above to update: "
-            condition_list = [index[0] for index in show_db_data(selection)]
+            condition_list = [index[0] for index in show_db_data(selection, isTuple=True)]
             print(condition_list)
             previous_input_index = input_helper(promt_msg, condition_list, set_int=True, isLoop=True)
 
