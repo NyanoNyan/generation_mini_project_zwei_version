@@ -188,8 +188,9 @@ def extra_order_info(load_product, load_courier):
     phone_number = input('Please input the phone number:')
     
     # Print products list with its index value
-    data_product = show_db_data(load_product)
+    data_product = show_db_data(load_product, isTuple=True)
     data_product_indexes = [data[0] for data in data_product]
+    print(data_product_indexes)
 
     # Get valid comma seperated product id's
     while True:
@@ -203,7 +204,7 @@ def extra_order_info(load_product, load_courier):
             print("Please enter valid Product Id's")
     
     # Print courier list with index value
-    data_courier = show_db_data(load_courier)
+    data_courier = show_db_data(load_courier, isTuple=True)
     check_list = [index[0] for index in data_courier]
     print('check_list:', check_list)
     ## Why is this not working?
