@@ -11,5 +11,6 @@ htmlcov
 testing_product.txt
 fixes.md
 learning.md
+export_db.md
 fake_data.csv
 random_playing_around.py
