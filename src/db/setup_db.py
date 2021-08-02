@@ -1,5 +1,6 @@
 import os
 import pymysql
+import pymysql.cursors
 from dotenv import load_dotenv
 
 print(os.curdir)
@@ -7,12 +8,15 @@ from helper_modules.input_helper import input_helper
 
 ## Set this up to use class for viewing, adding and deleting. One big helper helper.
 class HelperDB:
-    def __init__(self):
+    def __init__(self, test=False):
         load_dotenv()
         self.host = os.environ.get("mysql_host")
         self.user = os.environ.get("mysql_user")
         self.password = os.environ.get('mysql_pass')
-        self.database = os.environ.get("mysql_db")
+        if test == True:
+            self.database = os.environ.get("mysql_db_test")
+        else:
+            self.database = os.environ.get("mysql_db")
     
     def set_up_db_connection(self):
         self.conn = pymysql.connect(
@@ -21,6 +25,7 @@ class HelperDB:
             self.password,
             self.database
         )
+    
         self.cur = self.conn.cursor()
     
     def disconnect_database(self):
@@ -28,8 +33,12 @@ class HelperDB:
         self.cur.close()
         self.conn.close()
     
-    def fetch_all(self, sql):
+    def fetch_all(self, sql, dict_cur=False):
         self.set_up_db_connection()
+        if dict_cur == True:
+            self.cur = self.conn.cursor(pymysql.cursors.DictCursor)
+        else:
+            self.cur = self.conn.cursor()
         self.cur.execute(sql)
         data = self.cur.fetchall()
         self.disconnect_database()
@@ -49,16 +58,30 @@ class HelperDB:
         self.cur.execute(sql)
 
 
-def show_db_data(selection):
+## How to show column names and data values from a table. Need this to work 
+## to update order status.
+def show_db_data(selection, isTuple=False):
     try:
         db = HelperDB()
-        rows = db.fetch_all(f'SELECT * FROM {selection}')
-        print('inside the func', rows)
-        #get the table names
-        column_names = db.get_column_names(selection)
-        print('\n')
-        for row in rows:
-            print(f'{column_names[0]}: {row[0]}, {column_names[1]}: {row[1]}, {column_names[2]}: {row[2]}')
+        if isTuple == True:
+            rows = db.fetch_all(f'SELECT * FROM {selection}')
+        else:
+            if selection == 'show-orders':
+                rows = db.fetch_all(f"SELECT * FROM orders" 
+                + " INNER JOIN customer_detail"
+                + " ON orders.customer_detail_id = customer_detail_id"
+                + " WHERE customer_name = 'Miles';", dict_cur=True)
+                
+                print(f'\n{selection.capitalize()} Storage')
+                for row in rows:
+                    print(row)
+            else:
+                rows = db.fetch_all(f'SELECT * FROM {selection}', dict_cur=True)
+                print('inside the func', rows)
+
+                print(f'\n{selection.capitalize()} Storage')
+                for row in rows:
+                    print(row)
 
     except Exception as error:
         print('Cannot load database, check your setup', error)
@@ -70,9 +93,9 @@ def show_db_data(selection):
 
     return []
 
-def add_to_db(selection, new_value):
+def add_to_db(selection, new_value, test=False):
     try:
-        db = HelperDB()
+        db = HelperDB(test)
         if selection == 'orders':
             column_names_cus = db.get_column_names('customer_detail')
             column_names_ord = db.get_column_names('orders')
@@ -86,11 +109,17 @@ def add_to_db(selection, new_value):
             for product_id in new_value[-1]:
                 sql2 = f' INSERT INTO orders ( {column_names_ord[1]},{column_names_ord[2]},{column_names_ord[3]},{column_names_ord[4]} )' + f' VALUES ({get_created_cust_id}, {new_value[3]},{new_value[4]},{product_id} );'
                 db.execute_leave_open(sql2)
-        else:
+        elif selection == 'product':
             column_names = db.get_column_names(selection)
             db.execute_operation(
                 f'INSERT INTO {selection} ( {column_names[1]},{column_names[2]} )'
                 + f' VALUES ( \"{new_value[0]}\",{new_value[1]} );'
+            )
+        elif selection == 'courier':
+            column_names = db.get_column_names(selection)
+            db.execute_operation(
+                f'INSERT INTO {selection} ( {column_names[1]},{column_names[2]} )'
+                + f' VALUES ( \"{new_value[0]}\",\"{new_value[1]}\" );'
             )
     except Exception as error:
         print('Cannot add data from the database', error)
@@ -101,20 +130,37 @@ def add_to_db(selection, new_value):
 def update_to_db(selection):
     try:
         db = HelperDB()
-        column_names = db.get_column_names(selection)[1:]
 
-        promt_msg = "Please insert one of the index from above to update: "
-        previous_input_index = input_helper(promt_msg, [], set_int=True, isLoop=True)
-        for col_name in column_names:
-            new_input = input(f'New value for {col_name}: ')
-            if new_input == "":
-                continue
-            else:
-                if col_name not in ['price']:
-                    new_input = f'\"{new_input}\"'
+        if selection == 'update_order_status':
+            column_names = db.get_column_names('orders')[1:]
+            # Get the status Order index
+            prompt_msg = f'Please insert the order status index you want to change: '
+            condition_list = [index[0] for index in show_db_data('orders')]
+            previous_input_index_order = input_helper(prompt_msg, condition_list, True, True)
+            
+            # Get the Status index
+            prompt_msg2 = f'Please insert the {selection} status index you want to change: '
+            condition_list2 = [index[0] for index in show_db_data('status')]
+            new_status_index = input_helper(prompt_msg2, condition_list2, True, True)
+            
+            sql = f'UPDATE orders SET status_id = {new_status_index} WHERE id = {previous_input_index_order}'
+        else:
+            column_names = db.get_column_names(selection)[1:]
+            promt_msg = "Please insert one of the index from above to update: "
+            condition_list = [index[0] for index in show_db_data(selection)]
+            print(condition_list)
+            previous_input_index = input_helper(promt_msg, condition_list, set_int=True, isLoop=True)
 
-                sql = f'UPDATE {selection} SET {col_name} = {new_input} WHERE id = {previous_input_index}'
-                db.execute_operation(sql)
+            for col_name in column_names:
+                new_input = input(f'New value for {col_name}: ')
+                if new_input == "":
+                    continue
+                else:
+                    if col_name not in ['price']:
+                        new_input = f'\"{new_input}\"'
+
+                    sql = f'UPDATE {selection} SET {col_name} = {new_input} WHERE id = {previous_input_index}'
+                    db.execute_operation(sql)
 
     except Exception as error:
         print('Cannot update to Database', error)
