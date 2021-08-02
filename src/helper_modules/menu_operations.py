@@ -26,7 +26,7 @@ def main_menu():
     
     return first_option, selection
 
-def product_menu(selection, data_storage, filename):
+def product_menu(selection, data_storage):
     selection_print(selection)
     while True:
         product_menu_selection = input('Please select an option or press m to see the menu options: ')
@@ -38,7 +38,7 @@ def product_menu(selection, data_storage, filename):
             view_data(selection, data_storage)
             
         elif product_menu_selection == "2":
-            data_storage.append(append_data(selection, data_storage))
+            data_storage.append(append_data(selection))
             
         elif product_menu_selection == "3":
             print('\n')
@@ -58,7 +58,7 @@ def product_menu(selection, data_storage, filename):
         
     return data_storage
     
-def courier_menu(selection, data_storage, filename):
+def courier_menu(selection, data_storage):
     selection_print(selection)
     while True:
         courier_menu_selection = input('Please select an option or press m to see the menu options: ')
@@ -70,7 +70,7 @@ def courier_menu(selection, data_storage, filename):
             view_data(selection, data_storage)
             
         elif courier_menu_selection == "2":
-            data_storage.append(append_data(selection, data_storage))
+            data_storage.append(append_data(selection))
             
         elif courier_menu_selection == "3":
             print('\n')
@@ -89,7 +89,7 @@ def courier_menu(selection, data_storage, filename):
         
     return data_storage
 
-def orders_menu(selection, data_storage, data_storage_product, data_storage_courier):
+def orders_menu(selection, data_storage):
     selection_print(selection)
     while True:
         orders_menu_selection = input('Please select an option or press m to see the menu options: ')
@@ -100,16 +100,12 @@ def orders_menu(selection, data_storage, data_storage_product, data_storage_cour
         elif orders_menu_selection == "1":
             print('### Orders Inventory ###')
             print('\n')
-            view_data(selection, data_storage)
+            show_db_data('show-orders')
             print('\n')
             
         elif orders_menu_selection == "2":
             try:
                 append_data(selection)
-                # new_object_data = extra_order_info(data_storage_product, data_storage_courier)
-                print('\n')
-                # data_storage.append(new_object_data)
-        
                 print('\n')
                 print('New order has been added!')
                 print('\n')
@@ -120,8 +116,10 @@ def orders_menu(selection, data_storage, data_storage_product, data_storage_cour
                 print('\n')
                 
         elif orders_menu_selection == "3":
-            show_with_index(selection, data_storage)
+            show_db_data(selection)
+            show_db_data('status')
             print('\n')
+            update_to_db('update_order_status')
             # Get the status Order index
             prompt_msg = f'Please insert the {selection} status index you want to change: '
             condition_list = list(range(len(data_storage)))
