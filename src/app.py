@@ -32,16 +32,16 @@ def app():
             break
         elif main_menu_option == "1":
             clear_screen()
-            data_product = product_menu(selection, data_product, filename_product)
+            data_product = product_menu(selection, data_product)
 
         elif main_menu_option == "2":
             clear_screen()
 
-            data_courier = courier_menu(selection, data_courier, filename_courier)
+            data_courier = courier_menu(selection, data_courier)
         elif main_menu_option == "3":
             clear_screen()
 
-            data_order = orders_menu(selection, data_order, data_product, data_courier)
+            data_order = orders_menu(selection, data_order)
         else: 
             print('Please enter a valid option')
 
