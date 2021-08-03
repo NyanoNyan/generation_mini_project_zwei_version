@@ -132,6 +132,7 @@ def update_to_db(selection, test=False):
         db = HelperDB(test)
 
         if selection == 'update_order_status':
+            show_db_data('orders')
             column_names = db.get_column_names('orders')[1:]
             # Get the status Order index
             prompt_msg = f'Please insert the order status index you want to change: '
@@ -139,11 +140,13 @@ def update_to_db(selection, test=False):
             previous_input_index_order = input_helper(prompt_msg, condition_list, True, True)
             
             # Get the Status index
-            prompt_msg2 = f'Please insert the {selection} status index you want to change: '
+            show_db_data('status')
+            prompt_msg2 = f'Please insert the status index you want to change: '
             condition_list2 = [index[0] for index in show_db_data('status',isTuple=True)]
             new_status_index = input_helper(prompt_msg2, condition_list2, True, True)
             
             sql = f'UPDATE orders SET status_id = {new_status_index} WHERE id = {previous_input_index_order}'
+            db.execute_operation(sql)
         else:
             column_names = db.get_column_names(selection)[1:]
             promt_msg = "Please insert one of the index from above to update: "
