@@ -85,23 +85,7 @@ def test_add_to_db():
     db.execute_operation('TRUNCATE TABLE orders;')
     db.execute_operation('DELETE FROM customer_detail WHERE customer_name = "Miles"')
 
-@patch("builtins.input", side_effect=['11', 'Sausage Rolls', 2.2])
-@patch("builtins.print")
-def test_update_to_db(mock_print, mock_input):
-    ### Update Product, but only change price
-    mock_input
-    update_to_db('product', test=True)
-    
-    ## Check if data has gone through database execution
-    mock_print.assert_called_with("\nData has been updated!\n")
-    assert mock_input.call_count == 3
-    
-    ## Check if the data has been changed
-    db = HelperDB(test=True)
-    actual = db.fetch_all(f'SELECT * FROM product WHERE name = "Sausage Rolls"')[0]
-    assert 'Sausage Rolls' and 2.2 in actual
-    # Reset changes
-    db.execute_operation('UPDATE product SET price = 1.2 WHERE id = "11";')
+
 
 # @patch("builtins.print")
 # def test_delete_to_db(mock_print, setup_database):
