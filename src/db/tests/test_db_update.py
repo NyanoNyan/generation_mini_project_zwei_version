@@ -1,7 +1,8 @@
+from unittest import mock
 import pytest
 
 from unittest.mock import patch
-from db.setup_db import HelperDB, update_to_db
+from db.setup_db import HelperDB, add_to_db, update_to_db
 
 class Test_Update_Product:
     ### Update Product, but only change price ###
@@ -150,3 +151,25 @@ class Test_Update_Courier:
         db = HelperDB(test=True)
         actual = db.fetch_all(f'SELECT * FROM courier WHERE id = 2')[0]
         assert 'LL' and '07888383812' in actual
+
+class Test_Update_Order_Status:
+    ### Update Order status###
+    @patch("builtins.input", side_effect=['1', '2'])
+    def test_update_to_db_order_status(self, mock_input):
+        mock_input
+        add_to_db('orders', ['Miles', '99th Street', '07352114852', 1, 1, [1,2]], test=True)
+        update_to_db('update_order_status', test=True)
+
+        assert mock_input.call_count == 2
+        db = HelperDB(test=True)
+        actual = db.fetch_all(f"SELECT * FROM orders" 
+                + " INNER JOIN customer_detail"
+                + " ON orders.customer_detail_id = customer_detail_id"
+                + " WHERE customer_name = 'Miles';", dict_cur=True)
+        actual_status = db.fetch_all(f'SELECT * FROM orders WHERE id = 1')
+        # Check customer detail addition check
+        assert 'Miles' and '99th Street' in actual[0].values()
+        assert 2 in actual_status[0]
+
+        db.execute_operation('TRUNCATE orders')
+        db.execute_operation('DELETE FROM customer_detail WHERE customer_name = "Miles"')
